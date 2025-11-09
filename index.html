@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find My Faculty - Campus Locator</title>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons --><script type="module" src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom Tailwind Configuration --><script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Custom Palette
+                        'royal-blue': '#0052CC',
+                        'mint-green': '#00C853',
+                        // General colors
+                        'gray-light': '#F8F9FA',
+                        'gray-mid': '#6C757D',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 12px rgba(0, 0, 0, 0.08)',
+                        'accent': '0 4px 12px rgba(0, 200, 83, 0.25)',
+                    }
+                },
+            }
+        }
+    </script>
+    <style>
+        /* Ensure smooth scrolling for navigation */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* Custom scrollbar styling for a cleaner look (optional, but good practice) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+        /* Modal specific styles */
+        .modal {
+            display: none; /* Controlled by JS class manipulation */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            position: relative;
+            max-width: 650px; /* Increased size for AI feature */
+            width: 90%;
+            animation: fadeIn 0.3s ease-out;
+            max-height: 90vh; /* Limit height */
+            overflow-y: auto; /* Allow scrolling */
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #333;
+            text-decoration: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal.open {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="bg-white font-sans text-gray-800 antialiased">
+
+    <!-- Navigation Bar --><header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Site Name (Updated with your logo image) --><a href="#" class="h-10">
+                    <img src="/api/files/uploaded:logo.jpg-8bc127b2-453b-4628-9194-225cdcfd9785" alt="Find My Faculty Logo" class="h-full object-contain">
+                </a>
+                <!-- Desktop Navigation Links --><nav class="hidden md:flex space-x-8">
+                    <a href="#directory" class="text-gray-mid hover:text-royal-blue transition duration-150">Search Directory</a>
+                    <a href="#features" class="text-gray-mid hover:text-royal-blue transition duration-150">Features</a>
+                    <a href="#how-it-works" class="text-gray-mid hover:text-royal-blue transition duration-150">How It Works</a>
+                    <a href="#contact" class="text-gray-mid hover:text-royal-blue hover:font-medium transition duration-150">Contact</a>
+                </nav>
+                <!-- Search Button --><a href="#directory" class="hidden md:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-soft text-white bg-royal-blue hover:bg-royal-blue/90 transition duration-300">
+                    Search Faculty Now
+                </a>
+                <!-- Mobile Menu Button (Mock) --><button class="md:hidden p-2 rounded-lg text-gray-mid hover:bg-gray-light transition duration-150">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section --><section id="hero" class="pt-20 pb-28 md:pt-32 md:pb-40 bg-gray-light/50 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="md:flex items-center justify-between gap-12">
+                    <!-- Text Content --><div class="md:w-1/2">
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-4">
+                            Find Teachers Easily <span class="text-royal-blue">Across Your Campus</span>
+                        </h1>
+                        <p class="text-xl text-gray-mid mb-8 max-w-lg">
+                            A smart platform that helps students quickly find faculty details, cabin location, contact information, and office hours — without roaming the college.
+                        </p>
+
+                        <!-- Primary Button now scrolls to the directory --><a href="#directory" class="inline-flex items-center justify-center px-8 py-3 bg-mint-green text-gray-900 font-semibold rounded-lg shadow-accent hover:bg-mint-green/90 transition duration-300 transform hover:scale-[1.02] mb-6">
+                            Search Faculty Now
+                        </a>
+                        
+                        <!-- Secondary Link --><a href="#features" class="text-royal-blue font-semibold hover:underline transition duration-150 flex items-center gap-2">
+                            See Features
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+
+                    <!-- Hero Image (Updated with "Our Faculty" image) --><div class="md:w-1/2 mt-12 md:mt-0 flex justify-center relative">
+                        <img src="/api/files/uploaded:our_faculty.jpg-42a03358-1563-488f-a72e-d00d4c986c7d" alt="Our Faculty" class="rounded-3xl shadow-soft object-cover w-full max-w-lg transform rotate-2 hover:rotate-0 transition-transform duration-500 ease-in-out">
+                        <div class="absolute -bottom-4 -left-4 w-40 h-40 bg-mint-green/20 rounded-full mix-blend-multiply blur-xl animate-pulse" style="animation-duration: 4s;"></div>
+                        <div class="absolute -top-4 -right-4 w-32 h-32 bg-royal-blue/20 rounded-full mix-blend-multiply blur-xl animate-pulse animation-delay-2000" style="animation-duration: 4s;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Faculty Directory & Search Section --><section id="directory" class="py-24 md:py-32 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 text-center mb-12">
+                    Faculty Directory & Search
+                </h2>
+
+                <!-- Search Input --><div class="max-w-3xl mx-auto mb-12">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2"></i>
+                        <input 
+                            type="text" 
+                            id="facultySearchInput" 
+                            placeholder="Search by Name, Cabin, or Email..." 
+                            oninput="filterFaculty()" 
+                            class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl shadow-soft focus:ring-royal-blue focus:border-royal-blue transition duration-200 text-lg"
+                        >
+                    </div>
+                </div>
+
+                <!-- Faculty Results Container --><div id="facultyResults" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Faculty cards will be injected here by JavaScript --></div>
+                
+            </div>
+        </section>
+
+        <!-- Features Section --><section id="features" class="py-24 md:py-32 bg-gray-light">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-12">
+                    Why Use <span class="text-royal-blue">Find My Faculty</span>?
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    
+                    <!-- Feature 1: Search Any Faculty --><a href="#directory" class="block bg-white p-8 rounded-xl shadow-soft border-t-4 border-mint-green transform hover:scale-[1.03] transition duration-300 ease-out hover:shadow-lg group">
+                        <i data-lucide="search" class="w-10 h-10 text-mint-green mb-4 p-2 bg-mint-green/10 rounded-full group-hover:rotate-12 transition duration-500"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-royal-blue transition">Search Any Faculty</h3>
+                        <p class="text-gray-mid">Find teachers by name, department, or subject instantly.</p>
+                    </a>
+
+                    <!-- Feature 2: Locate Cabin/Room --><a href="#directory" class="block bg-white p-8 rounded-xl shadow-soft border-t-4 border-royal-blue transform hover:scale-[1.03] transition duration-300 ease-out hover:shadow-lg group">
+                        <i data-lucide="map-pin" class="w-10 h-10 text-royal-blue mb-4 p-2 bg-royal-blue/10 rounded-full group-hover:animate-pulse transition"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-mint-green transition">Locate Cabin/Room</h3>
+                        <p class="text-gray-mid">Know the building, floor, and room number in seconds.</p>
+                    </a>
+
+                    <!-- Feature 3: Contact & Office Hours --><a href="#directory" class="block bg-white p-8 rounded-xl shadow-soft border-t-4 border-mint-green transform hover:scale-[1.03] transition duration-300 ease-out hover:shadow-lg group">
+                        <i data-lucide="clock" class="w-10 h-10 text-mint-green mb-4 p-2 bg-mint-green/10 rounded-full group-hover:ring-2 ring-mint-green transition"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-royal-blue transition">Contact & Office Hours</h3>
+                        <p class="text-gray-mid">View email, office timings, and availability updates.</p>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section --><section id="how-it-works" class="py-24 md:py-32 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-16">
+                    How It Works
+                </h2>
+
+                <div class="flex flex-col md:flex-row items-center justify-between relative">
+                    
+                    <!-- Step 1 --><div class="flex-1 max-w-xs mb-10 md:mb-0">
+                        <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-royal-blue text-white rounded-full shadow-lg">
+                            <span class="text-2xl font-bold">1</span>
+                        </div>
+                        <p class="text-lg font-semibold mb-2">Search the faculty name or department.</p>
+                        <i data-lucide="user-search" class="w-10 h-10 text-royal-blue/60 mx-auto mt-2"></i>
+                    </div>
+
+                    <!-- Arrow 1 (Desktop) --><i data-lucide="arrow-right" class="hidden md:block w-16 h-8 text-gray-300 mx-8 mt-[-70px]"></i>
+                    <!-- Arrow 1 (Mobile) --><i data-lucide="arrow-down" class="md:hidden w-8 h-16 text-gray-300 mb-10"></i>
+
+                    <!-- Step 2 --><div class="flex-1 max-w-xs mb-10 md:mb-0">
+                        <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-royal-blue text-white rounded-full shadow-lg">
+                            <span class="text-2xl font-bold">2</span>
+                        </div>
+                        <p class="text-lg font-semibold mb-2">View real-time cabin location on campus map.</p>
+                        <i data-lucide="map" class="w-10 h-10 text-royal-blue/60 mx-auto mt-2"></i>
+                    </div>
+
+                    <!-- Arrow 2 (Desktop) --><i data-lucide="arrow-right" class="hidden md:block w-16 h-8 text-gray-300 mx-8 mt-[-70px]"></i>
+                    <!-- Arrow 2 (Mobile) --><i data-lucide="arrow-down" class="md:hidden w-8 h-16 text-gray-300 mb-10"></i>
+
+                    <!-- Step 3 --><div class="flex-1 max-w-xs">
+                        <div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center bg-royal-blue text-white rounded-full shadow-lg">
+                            <span class="text-2xl font-bold">3</span>
+                        </div>
+                        <p class="text-lg font-semibold mb-2">Contact through email or visit during office hours.</p>
+                        <i data-lucide="mail-check" class="w-10 h-10 text-royal-blue/60 mx-auto mt-2"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section --><section id="about" class="py-24 md:py-32 bg-gray-light/50">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-8">
+                    About <span class="text-mint-green">Find My Faculty</span>
+                </h2>
+                <p class="text-lg text-gray-mid leading-relaxed">
+                    Students often waste time walking across the campus trying to find the right teacher for signatures, doubts, project work, or assignments. This platform organizes all faculty details in one place so students can quickly search and connect without confusion.
+                    <span class="block mt-4 font-medium text-royal-blue">Our mission is to eliminate wasted time and make academic guidance accessible instantly.</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Section --><section id="contact" class="py-24 md:py-32 bg-royal-blue/10">
+            <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 text-center mb-12">
+                    Get in Touch
+                </h2>
+                
+                <form id="contactForm" class="bg-white p-8 sm:p-12 rounded-xl shadow-soft space-y-6">
+                    
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                        <input type="text" id="name" name="name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-royal-blue focus:border-royal-blue transition duration-200 shadow-sm">
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-royal-blue focus:border-royal-blue transition duration-200 shadow-sm">
+                    </div>
+                    
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                        <textarea id="message" name="message" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-royal-blue focus:border-royal-blue transition duration-200 shadow-sm"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full flex items-center justify-center px-6 py-3 bg-royal-blue text-white font-semibold rounded-lg shadow-soft hover:bg-royal-blue/90 transition duration-300 transform hover:scale-[1.01]">
+                        Send Message
+                    </button>
+
+                    <div id="messageBox" class="hidden text-center p-3 rounded-lg text-sm font-medium" role="alert"></div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Created By Section (New) --><section id="created-by" class="py-16 bg-gray-800 text-center text-gray-200">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h3 class="text-2xl font-bold mb-6">Created By</h3>
+                <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 text-lg font-medium text-gray-300">
+                    <span>Krish Sharma</span>
+                    <span>Shagun</span>
+                    <span>Anshika</span>
+                    <span>Ewan</span>
+                    <span>Ritesh</span>
+                    <span>Manvir</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer --><footer class="bg-gray-900 text-white py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-lg font-semibold mb-2">Find My Faculty</p>
+            <p class="text-gray-400 text-sm">© 2025 Find My Faculty | Designed for Colleges & Universities</p>
+        </div>
+    </footer>
+
+    <!-- Faculty Details Modal --><div id="facultyModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeFacultyModal()">&times;</span>
+            <div id="modalContent" class="space-y-4">
+                <!-- Content injected here --></div>
+        </div>
+    </div>
+
+    <!-- JavaScript for LLM integration and Faculty Search --><script>
+        // --- Gemini API Configuration ---
+        const API_KEY = ""; // Canvas will provide this during runtime
+        const MODEL_NAME = "gemini-2.5-flash-preview-09-2025";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+        
+        // --- 1. Faculty Data (with varied hours and descriptions) ---
+        const facultyData = [
+            { 
+                name: "Aman", 
+                cabin: "D1-603", 
+                email: "Aman@univ.edu", 
+                officeHours: "Mon-Fri, 9:30 AM - 3:30 PM",
+                subject: "Electrical Engineering",
+                description: "Aman is a hardworking and dedicated teacher known for his clear explanations and approachable demeanor. He values student engagement and always makes time for extra help during his office hours. He is committed to student success and does not conduct classes or office hours on Saturdays."
+            },
+            { 
+                name: "Tara", 
+                cabin: "C3-501", 
+                email: "Tara@univ.edu", 
+                officeHours: "Mon, Wed, Fri, 10:00 AM - 4:00 PM",
+                subject: "Business Management",
+                description: "Tara is not only an exceptional teacher but also a successful entrepreneur. Her business acumen enriches her lectures with real-world examples, making complex subjects relatable. She's highly innovative and inspires students to think critically and apply their knowledge practically."
+            },
+            { 
+                name: "Meena", 
+                cabin: "C1-105", 
+                email: "Meena@univ.edu", 
+                officeHours: "Tue-Thu, 11:00 AM - 4:30 PM",
+                subject: "Computer Science",
+                description: "Meena is a beloved professor, celebrated for her patience and ability to simplify challenging topics. Her calm and encouraging teaching style helps students overcome academic hurdles, making her a favorite for thesis guidance and assignment reviews."
+            },
+            { 
+                name: "Dev", 
+                cabin: "A2-301", 
+                email: "Dev@univ.edu", 
+                officeHours: "Mon-Fri, 9:30 AM - 1:30 PM",
+                subject: "Mechanical Engineering",
+                description: "Dev is a dynamic and energetic educator who uses interactive methods to engage students. His lectures are always lively, fostering an environment where students feel comfortable asking questions and exploring new ideas. He is particularly keen on guiding students through project development."
+            },
+            { 
+                name: "Uday", 
+                cabin: "D1-603", 
+                email: "Uday@univ.edu", 
+                officeHours: "Tue, Thu, 1:00 PM - 4:30 PM",
+                subject: "Mathematics",
+                description: "Uday is a very knowledgeable and meticulous teacher, recognized for his deep expertise in his field. He provides thorough feedback and guidance, ensuring students grasp foundational concepts firmly. He is often sought out for his precise advice on complex academic problems."
+            },
+            { 
+                name: "Priya Sharma", 
+                cabin: "B4-202", 
+                email: "priya.s@univ.edu", 
+                officeHours: "Mon-Fri, 10:00 AM - 4:30 PM",
+                subject: "Physics",
+                description: "Professor Priya Sharma is known for her innovative research and inspiring mentorship. She guides numerous students in advanced projects, fostering a passion for scientific inquiry and critical thinking. Her office hours are a great opportunity for students interested in academic research."
+            },
+            { 
+                name: "Ravi Kumar", 
+                cabin: "E5-110", 
+                email: "ravi.k@univ.edu", 
+                officeHours: "Mon, Wed, Fri, 9:30 AM - 12:30 PM",
+                subject: "Chemistry",
+                description: "Ravi Kumar is a highly approachable and supportive faculty member. He excels at breaking down complex theories into understandable lessons and is always available to clarify doubts. Students appreciate his dedication to their learning journey and his willingness to provide personalized attention."
+            }
+        ];
+
+        // --- 2. Faculty Search & Render Logic ---
+
+        function renderFaculty(data) {
+            const resultsContainer = document.getElementById('facultyResults');
+            if (!resultsContainer) return;
+
+            if (data.length === 0) {
+                resultsContainer.innerHTML = '<p class="col-span-full text-center text-gray-mid py-8 text-lg border-2 border-dashed border-gray-200 rounded-lg">No faculty found matching your search criteria. Try a name, room number, or email.</p>';
+                return;
+            }
+
+            const html = data.map(faculty => `
+                <div class="bg-white p-6 rounded-xl shadow-soft border-l-4 border-royal-blue/70 transition duration-300 hover:shadow-lg hover:bg-gray-50 cursor-pointer" onclick="openFacultyModal('${faculty.name}', '${faculty.cabin}', '${faculty.email}', '${faculty.officeHours}', \`${faculty.description}\`, '${faculty.subject}')">
+                    <h4 class="text-xl font-bold text-gray-900 mb-2">${faculty.name}</h4>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <p class="flex items-center gap-2 font-medium text-royal-blue"><i data-lucide="map-pin" class="w-4 h-4 text-mint-green"></i> Cabin/Room: <span class="font-bold">${faculty.cabin}</span></p>
+                        <p class="flex items-center gap-2"><i data-lucide="mail" class="w-4 h-4 text-mint-green"></i> Email: <a href="mailto:${faculty.email}" class="text-royal-blue hover:underline" onclick="event.stopPropagation();">${faculty.email}</a></p>
+                        <p class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-mint-green"></i> Office Hours: <span class="font-medium">${faculty.officeHours}</span></p>
+                    </div>
+                </div>
+            `).join('');
+
+            resultsContainer.innerHTML = html;
+            lucide.createIcons(); // Re-render icons after adding new content
+        }
+
+        function filterFaculty() {
+            const searchTerm = document.getElementById('facultySearchInput').value.toLowerCase();
+            
+            const filtered = facultyData.filter(faculty => {
+                return faculty.name.toLowerCase().includes(searchTerm) ||
+                       faculty.cabin.toLowerCase().includes(searchTerm) ||
+                       faculty.email.toLowerCase().includes(searchTerm);
+            });
+
+            renderFaculty(filtered);
+        }
+        
+        // --- 3. Modal Logic ---
+        const facultyModal = document.getElementById('facultyModal');
+
+        function openFacultyModal(name, cabin, email, officeHours, description, subject) {
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <h3 class="text-3xl font-bold text-royal-blue mb-4">${name} <span class="text-base text-gray-500 font-normal ml-2">(${subject})</span></h3>
+                <div class="grid grid-cols-2 gap-y-3 text-lg text-gray-800 mb-6">
+                    <p class="flex items-center gap-2"><i data-lucide="map-pin" class="w-5 h-5 text-mint-green"></i> <strong>Cabin/Room:</strong> <span class="font-semibold">${cabin}</span></p>
+                    <p class="flex items-center gap-2"><i data-lucide="mail" class="w-5 h-5 text-mint-green"></i> <strong>Email:</strong> <a href="mailto:${email}" class="text-royal-blue hover:underline">${email}</a></p>
+                    <p class="col-span-2 flex items-center gap-2"><i data-lucide="clock" class="w-5 h-5 text-mint-green"></i> <strong>Office Hours:</strong> <span class="font-semibold">${officeHours}</span></p>
+                </div>
+
+                <hr class="border-gray-200 my-4">
+                
+                <h4 class="text-xl font-bold text-gray-900 mb-3">About ${name}</h4>
+                <p class="text-gray-700 leading-relaxed mb-6">${description}</p>
+
+                <!-- Gemini AI Feature --><div class="bg-royal-blue/5 p-4 rounded-lg">
+                    <h5 class="text-lg font-bold text-royal-blue flex items-center gap-2 mb-3"><i data-lucide="wand-2" class="w-5 h-5"></i> AI Communication Assistant</h5>
+                    
+                    <label for="ai-intent-input" class="block text-sm font-medium text-gray-700 mb-2">What is the purpose of your email?</label>
+                    <input type="text" id="ai-intent-input" placeholder="e.g., Request to discuss project proposal for ${subject}." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-mint-green focus:border-mint-green transition duration-200 shadow-sm mb-3">
+                    
+                    <button id="ai-draft-button" onclick="generateEmailDraft('${name}', '${email}', '${subject}')" class="w-full flex items-center justify-center px-4 py-3 bg-mint-green text-gray-900 font-semibold rounded-lg shadow-soft hover:bg-mint-green/90 transition duration-300 transform hover:scale-[1.01]">
+                        ✨ Draft Email Request
+                    </button>
+
+                    <div id="ai-draft-loading" class="hidden text-center mt-3 text-sm text-royal-blue font-medium">
+                        <i data-lucide="loader-circle" class="w-4 h-4 inline animate-spin mr-2"></i> Generating draft...
+                    </div>
+
+                    <div id="ai-draft-result" class="mt-4 hidden">
+                        <h6 class="text-base font-semibold text-gray-800 mb-2">Generated Draft:</h6>
+                        <textarea id="draft-output" rows="10" readonly class="w-full p-3 text-sm border border-gray-300 rounded-lg bg-white font-mono"></textarea>
+                        <button onclick="copyDraft()" class="mt-2 w-full text-sm flex items-center justify-center px-4 py-2 bg-royal-blue text-white rounded-lg hover:bg-royal-blue/90 transition">
+                            <i data-lucide="copy" class="w-4 h-4 mr-2"></i> Copy to Clipboard
+                        </button>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons(); // Render icons inside the modal
+            facultyModal.classList.add('open');
+            document.getElementById('ai-intent-input').focus();
+        }
+
+        function closeFacultyModal() {
+            facultyModal.classList.remove('open');
+        }
+        
+        function copyDraft() {
+            const draftTextarea = document.getElementById('draft-output');
+            draftTextarea.select();
+            document.execCommand('copy');
+            alert('Draft copied to clipboard!'); // Using custom message box concept (replace with custom modal if needed)
+        }
+
+        // Close modal if user clicks outside of it
+        window.addEventListener('click', (event) => {
+            if (event.target == facultyModal) {
+                closeFacultyModal();
+            }
+        });
+
+
+        // --- 4. Gemini API Call Function ---
+
+        async function generateEmailDraft(facultyName, facultyEmail, facultySubject) {
+            const intentInput = document.getElementById('ai-intent-input');
+            const draftResult = document.getElementById('ai-draft-result');
+            const draftOutput = document.getElementById('draft-output');
+            const draftButton = document.getElementById('ai-draft-button');
+            const loadingIndicator = document.getElementById('ai-draft-loading');
+
+            const studentIntent = intentInput.value.trim();
+
+            if (studentIntent.length < 10) {
+                alert('Please enter a more detailed purpose for your email (at least 10 characters).');
+                return;
+            }
+
+            // Show loading state
+            draftResult.classList.add('hidden');
+            draftButton.disabled = true;
+            draftButton.innerHTML = `<i data-lucide="loader-circle" class="w-4 h-4 inline animate-spin mr-2"></i> Generating...`;
+            loadingIndicator.classList.remove('hidden');
+            lucide.createIcons();
+            
+            const systemPrompt = "You are an AI assistant that drafts professional and respectful emails for students to send to their university professors. Your tone must be formal, polite, and clearly state the purpose of the meeting or query. Provide the output as a single block of text starting with 'Subject: ' followed by the drafted email body. Do not include any conversational preamble or markdown formatting like ``` or **.";
+            
+            const userQuery = `Draft an email to Professor ${facultyName} regarding the student's request. The professor teaches ${facultySubject}. The student's specific intent is: "${studentIntent}". The draft must include a clear, professional subject line, a greeting, a concise explanation of the intent, and a respectful suggestion for a next step (like meeting during office hours or a brief email reply).`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            const maxRetries = 3;
+            let responseText = "Failed to generate email draft. Please try again later.";
+            
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        responseText = candidate.content.parts[0].text.trim();
+                        break; // Success! Exit loop
+                    } else {
+                         throw new Error("Invalid response structure from Gemini API.");
+                    }
+                } catch (error) {
+                    console.error(`Attempt ${i + 1} failed:`, error);
+                    if (i === maxRetries - 1) {
+                        // Last attempt failed
+                        break;
+                    }
+                    // Wait with exponential backoff before retrying
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                }
+            }
+
+            // Update UI with result
+            loadingIndicator.classList.add('hidden');
+            draftButton.disabled = false;
+            draftButton.innerHTML = `✨ Draft Email Request`;
+
+            draftOutput.value = responseText;
+            draftResult.classList.remove('hidden');
+        }
+
+        // --- 5. Initial Setup and Listeners ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Lucide icons on page load
+            lucide.createIcons();
+            
+            // Initial render of the full directory
+            if (document.getElementById('facultyResults')) {
+                renderFaculty(facultyData);
+            }
+        });
+
+        // Contact Form Submission Mock
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messageBox = document.getElementById('messageBox');
+            
+            // Show success message (instead of alert())
+            messageBox.textContent = 'Thank you! Your message has been sent successfully.';
+            messageBox.className = 'block bg-mint-green/20 text-mint-green text-center p-3 rounded-lg text-sm font-medium';
+            
+            // Clear form fields
+            document.getElementById('name').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('message').value = '';
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
